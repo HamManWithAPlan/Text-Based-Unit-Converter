@@ -12,24 +12,31 @@ public class App {
 
         Category category = new Category(chosenCategory);
 
-        // Ask for First Unit
+        // Receive the First Unit
         System.out.println("Units " + category.getNames().toString());
         System.out.print("Unit you would like to convert: ");
         String firstUnit = scanner.nextLine();
 
+        // First Unit object
+        Unit unit1 = new Unit(firstUnit, chosenCategory);
+
+        // Receive value
         System.out.print("Value to be converted: ");
         String valueAmount = scanner.nextLine();
 
+        // Receive the Second Unit
         System.out.print("Unit you would like the value to be converted to: ");
         String secondUnit = scanner.nextLine();
 
-        
+        // Second Unit object
+        Unit unit2 = new Unit(secondUnit, chosenCategory);
 
+        // Calculate result
+        double base = (Double.parseDouble(valueAmount) / unit2.multiplier());
+        double result = base * unit1.multiplier();
 
-        System.out.print(firstUnit + ", " + valueAmount + ", " + secondUnit);
-        
-
-        // Ask for Second Unit
+        // Print result
+        System.out.println(valueAmount + " " + unit1.shortened() + " is equal to " + result + " " + unit2.shortened());
 
         scanner.close();
     }
