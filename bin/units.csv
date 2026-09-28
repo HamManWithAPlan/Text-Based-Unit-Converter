@@ -46,3 +46,6 @@ Day, d, Time, 86400.0
 Minute, min, Time, 60.0
 Second, s, Time, 1.0
 Millisecond, ms, Time, 0.001
+Celsius,C,Temperature,1
+Fahrenheit,F,Temperature,1
+Kelvin,K,Temperature,1

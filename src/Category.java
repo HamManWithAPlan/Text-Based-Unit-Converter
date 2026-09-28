@@ -1,75 +1,116 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Category {
-    public String name;
-    private final ArrayList<Unit> units = new ArrayList<>(); // Stores all Units in given Category here
+
+    private String name;
+    private final ArrayList<Unit> units = new ArrayList<>();
 
     public Category(String name) {
         this.name = name;
-        loadCategoryData(); // On creation, gets info
+        loadCategoryData();
+    }
+
+    public String name() {
+        return name;
     }
 
     public ArrayList<Unit> getUnits() {
         return units;
     }
 
-    // Finds Unit by name, ignoring capitalisation
+    // Finds a Unit by its name or abbreviation, ignoring capitalisation
     public Unit findUnit(String name) {
+        if (name == null) {
+            return null;
+        }
+
         for (Unit unit : units) {
-            if (unit.name.equalsIgnoreCase(name)) {
+            if (unit.name().equalsIgnoreCase(name)
+                    || unit.shortened().equalsIgnoreCase(name)) {
                 return unit;
             }
         }
+
         return null;
     }
 
-    /* 
-     * Calculates conversion between Units.
-     * First - converts original value to the category's base Unit,
-     * Then - converts that base Unit's value into the target Unit
-    */
+    /*
+     * Calculates the conversion between Units - calls different calculation for Temperature
+     * First - converts the original value to the category's base Unit.
+     * Then - converts that base Unit's value into the target Unit.
+     */
     public double convert(double value, Unit from, Unit to) {
-        double baseValue = value * from.multiplier();
-        return baseValue / to.multiplier();
+        if (name.equalsIgnoreCase("Temperature")) {
+            return convertTemperature(value, from, to);
+        }
+
+        return value * from.multiplier() / to.multiplier();
+    }
+
+    /* 
+     * Calculates conversion for Temperature
+     * First - Converts value to Celsius (base point for 0)
+     * Then - Converts the value to specific Units based on their unique formulas
+     */
+    private double convertTemperature(double value, Unit from, Unit to) {
+        double celsius;
+
+        if (from.shortened().equalsIgnoreCase("C")) {
+            celsius = value;
+        } else if (from.shortened().equalsIgnoreCase("F")) {
+            celsius = (value - 32) * 5 / 9;
+        } else if (from.shortened().equalsIgnoreCase("K")) {
+            celsius = value - 273.15;
+        } else {
+            return value;
+        }
+
+        if (to.shortened().equalsIgnoreCase("C")) {
+            return celsius;
+        } else if (to.shortened().equalsIgnoreCase("F")) {
+            return celsius * 9 / 5 + 32;
+        } else if (to.shortened().equalsIgnoreCase("K")) {
+            return celsius + 273.15;
+        }
+
+        return celsius;
     }
 
     private void loadCategoryData() {
-        // Access resources for Unit and Category data
-        try (InputStream input = Category.class.getResourceAsStream("/units.csv")) {
-            if (input == null) {
-                System.err.println("Could not find units.csv.");
-                return;
-            }
+        InputStream input = Category.class.getResourceAsStream("/units.csv");
 
-            BufferedReader br = new BufferedReader(new InputStreamReader(input)); // Read text line by line
-            br.readLine(); // Skip Header of CSV file
+        if (input == null) {
+            return;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
             String line;
 
-            while ((line = br.readLine()) != null) {
-                // Separate the Unit data into columns
-                String[] columns = line.split(",");
+            reader.readLine();
 
-                if (columns.length >= 4) {
-                    // Differentiate column data
-                    String unitName = columns[0].trim();
-                    String unitShortened = columns[1].trim();
-                    String unitCategory = columns[2].trim();
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
 
-                    // Only load Units belonging to given Category
-                    if (unitCategory.equalsIgnoreCase(this.name)) {
-                        try {
-                            double unitMultiplier = Double.parseDouble(columns[3].trim()); // Data read from CSV file are Strings by default, must convert
-                            Unit unit = new Unit(unitName, unitShortened, unitMultiplier);
-                            units.add(unit);
-                        } catch (NumberFormatException e) {
-                            System.err.println("Multiplier error: " + line);
-                        }
-                    }
+                if (data.length != 4) {
+                    continue;
+                }
+
+                String unitName = data[0].trim();
+                String shortened = data[1].trim();
+                String category = data[2].trim();
+                double multiplier = Double.parseDouble(data[3].trim());
+
+                if (category.equalsIgnoreCase(name)) {
+                    units.add(new Unit(unitName, shortened, multiplier));
                 }
             }
-        } catch (IOException e) {
-            System.err.println("Error reading csv file: " + e.getMessage());
+
+        } catch (IOException | NumberFormatException e) {
+            System.out.println("Error loading Unit data.");
         }
     }
 }

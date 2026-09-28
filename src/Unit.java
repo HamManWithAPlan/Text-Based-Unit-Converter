@@ -1,13 +1,17 @@
 public class Unit {
-    public String name;
-    public String shortened;
-    public double multiplier;
 
-    // Stores Unit data
+    private String name;
+    private String shortened;
+    private double multiplier;
+
     public Unit(String name, String shortened, double multiplier) {
         this.name = name;
         this.shortened = shortened;
         this.multiplier = multiplier;
+    }
+
+    public String name() {
+        return name;
     }
 
     public String shortened() {
