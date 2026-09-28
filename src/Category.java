@@ -1,64 +1,75 @@
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
 
 public class Category {
     public String name;
-    
-    // Cache the lists in memory
-    private final List<String> nameInfo = new ArrayList<>();
-    private final List<String> shortenedInfo = new ArrayList<>();
-    private final List<Double> multiplierInfo = new ArrayList<>();
+    private final ArrayList<Unit> units = new ArrayList<>(); // Stores all Units in given Category here
 
     public Category(String name) {
         this.name = name;
-        loadCategoryData(); // Read the CSV on creation
+        loadCategoryData(); // On creation, gets info
     }
 
-    public List<String> getNames() {
-        return nameInfo;
+    public ArrayList<Unit> getUnits() {
+        return units;
     }
 
-    public List<String> getShortened() {
-        return shortenedInfo;
+    // Finds Unit by name, ignoring capitalisation
+    public Unit findUnit(String name) {
+        for (Unit unit : units) {
+            if (unit.name.equalsIgnoreCase(name)) {
+                return unit;
+            }
+        }
+        return null;
     }
 
-    public List<Double> getMultipliers() {
-        return multiplierInfo;
+    /* 
+     * Calculates conversion between Units.
+     * First - converts original value to the category's base Unit,
+     * Then - converts that base Unit's value into the target Unit
+    */
+    public double convert(double value, Unit from, Unit to) {
+        double baseValue = value * from.multiplier();
+        return baseValue / to.multiplier();
     }
 
     private void loadCategoryData() {
-        String csvFile = "units.csv";
-        String line;
-        String csvSplit = ",";
+        // Access resources for Unit and Category data
+        try (InputStream input = Category.class.getResourceAsStream("/units.csv")) {
+            if (input == null) {
+                System.err.println("Could not find units.csv.");
+                return;
+            }
 
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-            br.readLine(); // Skip header
+            BufferedReader br = new BufferedReader(new InputStreamReader(input)); // Read text line by line
+            br.readLine(); // Skip Header of CSV file
+            String line;
 
             while ((line = br.readLine()) != null) {
-                String[] columns = line.split(csvSplit);
+                // Separate the Unit data into columns
+                String[] columns = line.split(",");
 
-                // Ensure row has all 4 required columns
                 if (columns.length >= 4) {
+                    // Differentiate column data
                     String unitName = columns[0].trim();
                     String unitShortened = columns[1].trim();
                     String unitCategory = columns[2].trim();
-                    
+
+                    // Only load Units belonging to given Category
                     if (unitCategory.equalsIgnoreCase(this.name)) {
                         try {
-                            double unitMultiplier = Double.parseDouble(columns[3].trim());
-                            
-                            // Save to memory
-                            nameInfo.add(unitName);
-                            shortenedInfo.add(unitShortened);
-                            multiplierInfo.add(unitMultiplier);
+                            double unitMultiplier = Double.parseDouble(columns[3].trim()); // Data read from CSV file are Strings by default, must convert
+                            Unit unit = new Unit(unitName, unitShortened, unitMultiplier);
+                            units.add(unit);
                         } catch (NumberFormatException e) {
-                            System.err.println("Skipping malformed multiplier in line: " + line);
+                            System.err.println("Multiplier error: " + line);
                         }
                     }
                 }
             }
         } catch (IOException e) {
-            System.err.println("Error reading the csv file: " + e.getMessage());
+            System.err.println("Error reading csv file: " + e.getMessage());
         }
     }
 }

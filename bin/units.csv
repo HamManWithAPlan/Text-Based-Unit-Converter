@@ -32,15 +32,13 @@ Cup, cup, Volume/Kitchen, 0.25
 Square Kilometre, km^2, Area, 1000000.0
 Hectare, ha, Area, 10000.0
 Square Metre, m^2, Area, 1.0
-Square Centimetre, cm^2, Area, 0.01
+Square Centimetre, cm^2, Area, 0.001
 Square Millimetre, mm^2, Area, 0.000001
 Square Inch, in^2, Area, 0.00064516
 Square Foot, ft^2, Area, 0.09290304
 Square Yard, yd^2, Area, 0.83612736
 Acre, ac, Area, 4046.8564224
 Square Mile, mi^2, Area, 2589988.110336
-Celsius, °C, Temperature, 1.0
-Fahrenheight, °F, Temperature, 1.8
 Month, mo, Time, 2629800.0
 Fortnight, fn, Time, 1209600.0
 Week, wk, Time, 604800.0
@@ -48,10 +46,3 @@ Day, d, Time, 86400.0
 Minute, min, Time, 60.0
 Second, s, Time, 1.0
 Millisecond, ms, Time, 0.001
-
-
-
-
-# remember... Category, Speed
-# Category, Digital Storage
-# Category, Currency
