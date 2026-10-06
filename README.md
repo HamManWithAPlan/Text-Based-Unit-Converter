@@ -20,16 +20,16 @@ The application also contains JUnit tests which test unit searching, conversion 
 
 ## How to Run the Application
 - Open a Terminal in the Text-Based-Unit-Converter folder.
-- Enter `cd src`.
+- Enter `cd src` (ensure the terminal's directory is the src folder).
 - Enter `javac App.java Category.java Unit.java Conversion.java ConversionHistory.java`.
 - Enter `java App`.
 - Follow the instructions given by the Menu displayed in the Terminal.
-- Select Option 3 to exit and save the Conversion History.
+- Select Option 3 to exit.
 
 This application required Java to be installed on the running machine.
 
-
 ## How to Run the Tests
-- The JUnit library (.jar file) is provided in the `lib` folder.
-- From the main project folder, compile the source files and tests using the JUnit file.
+- Enter `cd src` (ensure the terminal's directory is the src folder).
+- Enter `javac -cp "../lib/*" -d ../bin *.java`.
+- Enter  `java -jar ../lib/junit-platform-console-standalone-1.7.2.jar --class-path "../bin;." --scan-class-path`
 - The tests cover normal conversions, invalid units, lowercase unit names, abbreviations, negative values, zero values, same-unit conversions, invalid categories and conversion history file saving.

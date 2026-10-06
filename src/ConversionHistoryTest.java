@@ -1,18 +1,14 @@
 import static org.junit.Assert.*;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-
 import org.junit.Test;
 
 public class ConversionHistoryTest {
-
     @Test
     public void testAdd() {
         ConversionHistory history = new ConversionHistory();
-
         Unit kg = new Unit("Kilogram", "kg", 1);
         Unit g = new Unit("Gram", "g", 0.001);
 
@@ -24,7 +20,6 @@ public class ConversionHistoryTest {
     @Test
     public void testGetLatest() {
         ConversionHistory history = new ConversionHistory();
-
         Unit kg = new Unit("Kilogram", "kg", 1);
         Unit g = new Unit("Gram", "g", 0.001);
 
@@ -45,39 +40,24 @@ public class ConversionHistoryTest {
 
     @Test
     public void testAddSavesToCSV() throws IOException {
-
-        File tempFile = File.createTempFile(
-                "conversion-history-test",
-                ".csv"
-        );
+        File tempFile = File.createTempFile("conversion-history-test", ".csv");
 
         try {
-            ConversionHistory history =
-                    new ConversionHistory(tempFile.getPath());
-
+            ConversionHistory history = new ConversionHistory(tempFile.getPath());
             Unit kg = new Unit("Kilogram", "kg", 1);
             Unit g = new Unit("Gram", "g", 0.001);
 
             history.add(2, kg, g, 2000);
 
-            BufferedReader reader =
-                    new BufferedReader(new FileReader(tempFile));
+            BufferedReader reader = new BufferedReader(new FileReader(tempFile));
 
             String header = reader.readLine();
             String conversion = reader.readLine();
 
             reader.close();
 
-            assertEquals(
-                    "Original Value,From Unit,Result Value,To Unit",
-                    header
-            );
-
-            assertEquals(
-                    "2.0,kg,2000.0,g",
-                    conversion
-            );
-
+            assertEquals("Original Value,From Unit,Result Value,To Unit", header);
+            assertEquals("2.0,kg,2000.0,g", conversion);
         } finally {
             tempFile.delete();
         }
@@ -85,24 +65,17 @@ public class ConversionHistoryTest {
 
     @Test
     public void testAddAppendsToCSV() throws IOException {
-
-        File tempFile = File.createTempFile(
-                "conversion-history-test",
-                ".csv"
-        );
+        File tempFile = File.createTempFile("conversion-history-test", ".csv");
 
         try {
-            ConversionHistory history =
-                    new ConversionHistory(tempFile.getPath());
-
+            ConversionHistory history = new ConversionHistory(tempFile.getPath());
             Unit kg = new Unit("Kilogram", "kg", 1);
             Unit g = new Unit("Gram", "g", 0.001);
 
             history.add(2, kg, g, 2000);
             history.add(5, kg, g, 5000);
 
-            BufferedReader reader =
-                    new BufferedReader(new FileReader(tempFile));
+            BufferedReader reader = new BufferedReader(new FileReader(tempFile));
 
             String header = reader.readLine();
             String firstConversion = reader.readLine();
@@ -110,21 +83,9 @@ public class ConversionHistoryTest {
 
             reader.close();
 
-            assertEquals(
-                    "Original Value,From Unit,Result Value,To Unit",
-                    header
-            );
-
-            assertEquals(
-                    "2.0,kg,2000.0,g",
-                    firstConversion
-            );
-
-            assertEquals(
-                    "5.0,kg,5000.0,g",
-                    secondConversion
-            );
-
+            assertEquals("Original Value,From Unit,Result Value,To Unit", header);
+            assertEquals("2.0,kg,2000.0,g", firstConversion);
+            assertEquals("5.0,kg,5000.0,g", secondConversion);
         } finally {
             tempFile.delete();
         }

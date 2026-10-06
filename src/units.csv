@@ -43,6 +43,7 @@ Month, mo, Time, 2629800.0
 Fortnight, fn, Time, 1209600.0
 Week, wk, Time, 604800.0
 Day, d, Time, 86400.0
+Hour, h, Time, 3600.0
 Minute, min, Time, 60.0
 Second, s, Time, 1.0
 Millisecond, ms, Time, 0.001

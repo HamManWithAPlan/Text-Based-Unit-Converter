@@ -6,20 +6,19 @@ import java.util.ArrayList;
 
 public class Category {
 
-    private String name;
-    private final ArrayList<Unit> units = new ArrayList<>();
+    private final String NAME;
+    private final ArrayList<Unit> UNITS = new ArrayList<>();
 
     public Category(String name) {
-        this.name = name;
-        loadCategoryData();
+        this.NAME = name;
     }
 
     public String name() {
-        return name;
+        return NAME;
     }
 
     public ArrayList<Unit> getUnits() {
-        return units;
+        return UNITS;
     }
 
     // Finds a Unit by its name or abbreviation, ignoring capitalisation
@@ -28,9 +27,8 @@ public class Category {
             return null;
         }
 
-        for (Unit unit : units) {
-            if (unit.name().equalsIgnoreCase(name)
-                    || unit.shortened().equalsIgnoreCase(name)) {
+        for (Unit unit : UNITS) {
+            if (unit.name().equalsIgnoreCase(name) || unit.shortened().equalsIgnoreCase(name)) {
                 return unit;
             }
         }
@@ -44,7 +42,7 @@ public class Category {
      * Then - converts that base Unit's value into the target Unit.
      */
     public double convert(double value, Unit from, Unit to) {
-        if (name.equalsIgnoreCase("Temperature")) {
+        if (NAME.equalsIgnoreCase("Temperature")) {
             return convertTemperature(value, from, to);
         }
 
@@ -80,11 +78,20 @@ public class Category {
         return celsius;
     }
 
-    private void loadCategoryData() {
+    public static ArrayList<Category> loadCategories() {
+        ArrayList<Category> categories = new ArrayList<>();
+
+        categories.add(new Category("Length/Distance"));
+        categories.add(new Category("Mass"));
+        categories.add(new Category("Volume/Kitchen"));
+        categories.add(new Category("Area"));
+        categories.add(new Category("Time"));
+        categories.add(new Category("Temperature"));
+
         InputStream input = Category.class.getResourceAsStream("/units.csv");
 
         if (input == null) {
-            return;
+            return categories;
         }
 
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
@@ -101,16 +108,23 @@ public class Category {
 
                 String unitName = data[0].trim();
                 String shortened = data[1].trim();
-                String category = data[2].trim();
+                String categoryName = data[2].trim();
                 double multiplier = Double.parseDouble(data[3].trim());
 
-                if (category.equalsIgnoreCase(name)) {
-                    units.add(new Unit(unitName, shortened, multiplier));
+                Unit unit = new Unit(unitName, shortened, multiplier);
+
+                for (Category category : categories) {
+                    if (category.name().equalsIgnoreCase(categoryName)) {
+                        category.UNITS.add(unit);
+                        break;
+                    }
                 }
             }
 
         } catch (IOException | NumberFormatException e) {
             System.out.println("Error loading Unit data.");
         }
+
+        return categories;
     }
 }

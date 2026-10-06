@@ -3,9 +3,10 @@ import java.util.*;
 public class App {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in); 
-        ConversionHistory history = new ConversionHistory(); 
+        ConversionHistory history = new ConversionHistory();
+        ArrayList<Category> categories = Category.loadCategories();
 
-        boolean running = true; // Menu Loop
+        boolean running = true;
 
         while (running) {
             System.out.println();
@@ -17,10 +18,9 @@ public class App {
 
             String choice = scanner.nextLine();
 
-            // Menu Options
             switch (choice) {
                 case "1":
-                    makeConversion(scanner, history);
+                    makeConversion(scanner, history, categories);
                     break;
                 case "2":
                     history.printHistory();
@@ -37,13 +37,20 @@ public class App {
         System.out.println("Thanks for using this tool.");
     }
 
-    public static void makeConversion(Scanner scanner, ConversionHistory history) {
+    public static void makeConversion(Scanner scanner, ConversionHistory history, ArrayList<Category> categories) {
         System.out.println("Categories [ Length/Distance, Mass, Volume/Kitchen, Area, Time, Temperature ]");
         System.out.print("Enter Category: ");
         String categoryName = scanner.nextLine();
-        Category category = new Category(categoryName);
+        Category category = null;
 
-        if (category.getUnits().isEmpty()) {
+        for (Category currentCategory : categories) {
+            if (currentCategory.name().equalsIgnoreCase(categoryName)) {
+                category = currentCategory;
+                break;
+            }
+        }
+
+        if (category == null) {
             System.out.println("Invalid category.");
             return;
         }

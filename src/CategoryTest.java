@@ -1,13 +1,23 @@
 import static org.junit.Assert.*;
-
+import java.util.ArrayList;
 import org.junit.Test;
 
 public class CategoryTest {
+    private Category getCategory(String name) {
+        ArrayList<Category> categories = Category.loadCategories();
+
+        for (Category category : categories) {
+            if (category.name().equalsIgnoreCase(name)) {
+                return category;
+            }
+        }
+
+        return new Category(name);
+    }
 
     @Test
     public void testFindUnit() {
-        Category category = new Category("Mass");
-
+        Category category = getCategory("Mass");
         Unit unit = category.findUnit("Kilogram");
 
         assertNotNull(unit);
@@ -16,8 +26,7 @@ public class CategoryTest {
 
     @Test
     public void testFindUnitLowercase() {
-        Category category = new Category("Mass");
-
+        Category category = getCategory("Mass");
         Unit unit = category.findUnit("kilogram");
 
         assertNotNull(unit);
@@ -26,8 +35,7 @@ public class CategoryTest {
 
     @Test
     public void testFindUnitAbbreviation() {
-        Category category = new Category("Mass");
-
+        Category category = getCategory("Mass");
         Unit unit = category.findUnit("kg");
 
         assertNotNull(unit);
@@ -36,8 +44,7 @@ public class CategoryTest {
 
     @Test
     public void testFindUnitNull() {
-        Category category = new Category("Mass");
-
+        Category category = getCategory("Mass");
         Unit unit = category.findUnit(null);
 
         assertNull(unit);
@@ -45,8 +52,7 @@ public class CategoryTest {
 
     @Test
     public void testFindInvalidUnit() {
-        Category category = new Category("Mass");
-
+        Category category = getCategory("Mass");
         Unit unit = category.findUnit("Banana");
 
         assertNull(unit);
@@ -54,8 +60,7 @@ public class CategoryTest {
 
     @Test
     public void testConvert() {
-        Category category = new Category("Mass");
-
+        Category category = getCategory("Mass");
         Unit kg = category.findUnit("Kilogram");
         Unit g = category.findUnit("Gram");
 
@@ -66,8 +71,7 @@ public class CategoryTest {
 
     @Test
     public void testConvertNegative() {
-        Category category = new Category("Mass");
-
+        Category category = getCategory("Mass");
         Unit kg = category.findUnit("Kilogram");
         Unit g = category.findUnit("Gram");
 
@@ -78,8 +82,7 @@ public class CategoryTest {
 
     @Test
     public void testConvertSameUnit() {
-        Category category = new Category("Mass");
-
+        Category category = getCategory("Mass");
         Unit kg = category.findUnit("Kilogram");
 
         double result = category.convert(5, kg, kg);
@@ -89,8 +92,7 @@ public class CategoryTest {
 
     @Test
     public void testConvertLength() {
-        Category category = new Category("Length/Distance");
-
+        Category category = getCategory("Length/Distance");
         Unit metre = category.findUnit("Metre");
         Unit centimetre = category.findUnit("Centimetre");
 
@@ -101,8 +103,7 @@ public class CategoryTest {
 
     @Test
     public void testConvertZero() {
-        Category category = new Category("Mass");
-
+        Category category = getCategory("Mass");
         Unit kg = category.findUnit("Kilogram");
         Unit g = category.findUnit("Gram");
 
@@ -119,10 +120,20 @@ public class CategoryTest {
     }
 
     @Test
+    public void testLoadCategories() {
+        ArrayList<Category> categories = Category.loadCategories();
+
+        assertEquals(6, categories.size());
+
+        Category temperature = getCategory("Temperature");
+
+        assertFalse(temperature.getUnits().isEmpty());
+    }
+
+    @Test
     public void testDescription() {
         Unit kg = new Unit("Kilogram", "kg", 1);
         Unit g = new Unit("Gram", "g", 0.001);
-
         Conversion conversion = new Conversion(2, kg, g, 2000);
 
         assertEquals("2.0 kg = 2000.0 g", conversion.description());

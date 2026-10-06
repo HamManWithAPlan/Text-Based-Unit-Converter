@@ -1,24 +1,24 @@
 public class Unit {
 
-    private String name;
-    private String shortened;
-    private double multiplier;
+    private final String NAME;
+    private final String SHORTENED;
+    private final double MULTIPLIER;
 
     public Unit(String name, String shortened, double multiplier) {
-        this.name = name;
-        this.shortened = shortened;
-        this.multiplier = multiplier;
+        this.NAME = name;
+        this.SHORTENED = shortened;
+        this.MULTIPLIER = multiplier;
     }
 
     public String name() {
-        return name;
+        return NAME;
     }
 
     public String shortened() {
-        return shortened;
+        return SHORTENED;
     }
 
     public double multiplier() {
-        return multiplier;
+        return MULTIPLIER;
     }
 }

@@ -8,19 +8,30 @@ import java.util.ArrayList;
 
 public class ConversionHistory {
 
-    private final ArrayList<Conversion> conversions = new ArrayList<>();
+    private final ArrayList<Conversion> CONVERSIONS = new ArrayList<>();
     private String fileName = "conversion_history.csv";
 
     public ConversionHistory() {
+        this.fileName = resolveMainDirectoryPath("conversion_history.csv");
     }
 
     public ConversionHistory(String fileName) {
         this.fileName = fileName;
     }
 
+    private String resolveMainDirectoryPath(String targetFile) {
+        String currentDir = System.getProperty("user.dir");
+
+        if (currentDir.endsWith("src")) {
+            return ".." + File.separator + targetFile;
+        }
+        
+        return targetFile;
+    }
+
     public void add(double value, Unit fromUnit, Unit toUnit, double result) {
         Conversion conversion = new Conversion(value, fromUnit, toUnit, result);
-        conversions.add(conversion);
+        CONVERSIONS.add(conversion);
 
         try {
             saveConversionToCSV(conversion);
@@ -34,23 +45,13 @@ public class ConversionHistory {
 
         boolean newFile = !file.exists() || file.length() == 0;
 
-        try (BufferedWriter writer = new BufferedWriter(
-                new FileWriter(file, true))) {
-
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, true))) {
             if (newFile) {
                 writer.write("Original Value,From Unit,Result Value,To Unit");
                 writer.newLine();
             }
 
-            writer.write(
-                    conversion.value()
-                    + ","
-                    + conversion.fromUnit().shortened()
-                    + ","
-                    + conversion.result()
-                    + ","
-                    + conversion.toUnit().shortened()
-            );
+            writer.write(conversion.value() + "," + conversion.fromUnit().shortened() + "," + conversion.result() + "," + conversion.toUnit().shortened());
             writer.newLine();
         }
     }
@@ -65,9 +66,7 @@ public class ConversionHistory {
 
         System.out.println("===== Conversion History =====");
 
-        try (BufferedReader reader = new BufferedReader(
-                new FileReader(file))) {
-
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             // Skip the CSV header
             reader.readLine();
 
@@ -75,31 +74,22 @@ public class ConversionHistory {
 
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
-
-                System.out.println(
-                        data[0] + " " + data[1]
-                        + " = "
-                        + data[2] + " " + data[3]
-                );
+                System.out.println(data[0] + " " + data[1] + " = " + data[2] + " " + data[3]);
             }
-
         } catch (IOException e) {
-            System.out.println(
-                    "Error reading conversion history: "
-                    + e.getMessage()
-            );
+            System.out.println("Error reading conversion history: " + e.getMessage());
         }
     }
 
     public ArrayList<Conversion> getConversions() {
-        return conversions;
+        return CONVERSIONS;
     }
 
     public Conversion getLatest() {
-        if (conversions.isEmpty()) {
+        if (CONVERSIONS.isEmpty()) {
             return null;
         }
 
-        return conversions.get(conversions.size() - 1);
+        return CONVERSIONS.get(CONVERSIONS.size() - 1);
     }
 }
