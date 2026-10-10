@@ -1,0 +1,18 @@
+# Java compiler outputs
+bin/
+*.class
+
+# Eclipse IDE files
+.metadata/
+.classpath
+.project
+.settings/
+
+# IntelliJ IDEA files
+.idea/
+*.iml
+*.iws
+
+# Operating System garbage
+.DS_Store
+Thumbs.db
