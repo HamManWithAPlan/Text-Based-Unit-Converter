@@ -67,6 +67,7 @@ public class App {
 
         System.out.print("Value to be converted: ");
         double value;
+        
         try {
             value = Double.parseDouble(scanner.nextLine());
         } catch (NumberFormatException e) {

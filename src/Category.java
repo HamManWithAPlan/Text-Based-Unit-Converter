@@ -5,7 +5,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 public class Category {
-
     private final String NAME;
     private final ArrayList<Unit> UNITS = new ArrayList<>();
 
@@ -21,7 +20,6 @@ public class Category {
         return UNITS;
     }
 
-    // Finds a Unit by its name or abbreviation, ignoring capitalisation
     public Unit findUnit(String name) {
         if (name == null) {
             return null;
@@ -94,9 +92,14 @@ public class Category {
             return categories;
         }
 
+        /* 
+        * Receives CSV Data
+        * First - Skips the header and loops through each line in the CSV
+        * Then - Extracts and formats the data found
+        * Then - Uses the extracted data to create the new Unit for the Category
+        */
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
             String line;
-
             reader.readLine();
 
             while ((line = reader.readLine()) != null) {

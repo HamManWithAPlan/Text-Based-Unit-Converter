@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class ConversionHistory {
-
     private final ArrayList<Conversion> CONVERSIONS = new ArrayList<>();
     private String fileName = "conversion_history.csv";
 
@@ -19,6 +18,10 @@ public class ConversionHistory {
         this.fileName = fileName;
     }
 
+    /**
+     * Prevents path breaking if the app is executed from within the 'src' folder.
+     * This is so 'conversion_history.csv' is always read from and written to the main directory
+     */
     private String resolveMainDirectoryPath(String targetFile) {
         String currentDir = System.getProperty("user.dir");
 
@@ -67,9 +70,7 @@ public class ConversionHistory {
         System.out.println("===== Conversion History =====");
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            // Skip the CSV header
-            reader.readLine();
-
+            reader.readLine(); // Skip the CSV header
             String line;
 
             while ((line = reader.readLine()) != null) {

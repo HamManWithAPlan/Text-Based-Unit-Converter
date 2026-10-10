@@ -1,5 +1,4 @@
 public class Unit {
-
     private final String NAME;
     private final String SHORTENED;
     private final double MULTIPLIER;
